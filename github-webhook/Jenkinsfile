@@ -1,5 +1,13 @@
-stage('Processing') {
-    echo "Building..."
-    echo "Something cool"
-    echo "flag: ${params.payload}"
+pipeline {
+    agent none
+    parameters {
+        booleanParam(defaultValue: true, description: 'Github webhook payload', name: 'payload')
+    }
+    stages {
+        stage("Processing") {
+            steps {
+                echo "flag: ${params.payload}"
+            }
+        }
+    }
 }
