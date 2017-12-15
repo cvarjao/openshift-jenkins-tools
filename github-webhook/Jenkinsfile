@@ -2,5 +2,6 @@
 // RedHat Jenkins, comes with pipeline 2.1. So we are stick with Scripted pipeline for now
 
 stage('Processing') {
-    echo "payload: ${params.payload}"
+    def webhookPayload = readJSON text: params.payload
+    echo "payload: ${webhookPayload}"
 }
