@@ -1,13 +1,6 @@
-pipeline {
-    agent none
-    parameters {
-        booleanParam(defaultValue: true, description: 'Github webhook payload', name: 'payload')
-    }
-    stages {
-        stage("Processing") {
-            steps {
-                echo "flag: ${params.payload}"
-            }
-        }
-    }
+// Version 2.5 of the "Pipeline plugin" introduces support for Declarative Pipeline syntax
+// RedHat Jenkins, comes with pipeline 2.1. So we are stick with Scripted pipeline for now
+
+stage('Processing') {
+    echo "payload: ${params.payload}"
 }
