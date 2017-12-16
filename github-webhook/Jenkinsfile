@@ -2,10 +2,11 @@
 // RedHat Jenkins, comes with pipeline 2.1. So we are stick with Scripted pipeline for now
 
 
-def payload = readJSON text: params.payload
+def payload;
 
 node('master') {
   stage('Processing') {
+      payload = readJSON text: params.payload
       if (payload.pull_request!=null){
         def prNumber=payload.pull_request.number;
         def cloneUrl=payload.repository.clone_url;
