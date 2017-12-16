@@ -2,19 +2,57 @@
 // RedHat Jenkins, comes with pipeline 2.1. So we are stick with Scripted pipeline for now
 
 
+def payload = readJSON text: params.payload
+
 node('master') {
   stage('Processing') {
-      def payload = readJSON text: params.payload
-      
       if (payload.pull_request!=null){
-        echo "This is a pull_request event"
-        echo "payload.action: ${payload.action}"
-        echo "payload.pull_request: ${payload.pull_request}"
-        //git branch: 'refs/pull/2', changelog: false, poll: false, url: 'https://github.com/cvarjao/openshift-examples.git'
-        checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: 'refs/pull/2']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'pr-2']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cvarjao/openshift-examples.git']]]
+        def prNumber=payload.pull_request.number;
+        def cloneUrl=payload.repository.clone_url;
+        def baseSha=payload.pull_request.base.sha;
+        def headSha=payload.pull_request.head.sha;
+        
+        //echo "This is a pull_request event"
+        //echo "payload.action: ${payload.action}"
+        //echo "payload.pull_request.id: ${payload.pull_request.id}"
+        //echo "payload.pull_request.number: ${payload.pull_request.number}"
+        //echo "payload.repository.id: ${payload.repository.id}"
+        //echo "payload.repository.name: ${payload.repository.name}"
+        //echo "payload.repository.full_name: ${payload.repository.full_name}"
+        //echo "payload.repository.clone_url: ${payload.repository.clone_url}"
+        //echo "payload.pull_request.base.sha: ${payload.pull_request.base.sha}"
+        //echo "payload.pull_request.head.sha: ${payload.pull_request.head.sha}"
+        
+        try{
+          checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: "refs/remotes/origin/pr/${prNumber}/head"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', depth: 0, honorRefspec: true, noTags: true, reference: '', shallow: false], [$class: 'RelativeTargetDirectory', relativeTargetDir: "pr-${prNumber}"], [$class: 'LocalBranch', localBranch: "pr-${prNumber}"]], submoduleCfg: [], userRemoteConfigs: [[name: 'origin', refspec: "+refs/pull/${prNumber}/*:refs/remotes/origin/pr/${prNumber}/*", url: "${cloneUrl}"]]]
+          dir ("pr-${prNumber}"){
+            def changedFiles=sh(returnStdout: true, script: "git diff --name-only ${baseSha} ${headSha}").trim()
+            BufferedReader reader = new BufferedReader(new StringReader(changedFiles))
+            String line = reader.readLine();
+            def rootDirs=[];
+            while (line != null) {
+                def index=line.indexOf('/')
+                def rootDir=line.substring(0, index)
+                if (!rootDirs.contains(rootDir)){
+                  rootDirs.add(rootDir);
+                }
+                line = reader.readLine();
+            }
+            reader.close()
+          }
+        }finally{
+          sh "rm -rf ${pwd()}/pr-${prNumber}"
+        }
+        if (rootDirs.size()==0){){
+          error("No root directory found.")
+        }else if (rootDirs.size()>1){){
+          error("Multiple root directory found: ${rootDirs}")
+        }else{
+          build job: rootDirs[0], parameters: [string(name: 'PULL_REQUEST_NUMBER', value: "${payload.pull_request.number}")], quietPeriod: 0, wait: false
+        }
       }else{
-        echo "This is a unknown event"
         echo "payload: ${params.payload}"
+        error("Build failed because this is not a supported event")
       }
   }
 }
