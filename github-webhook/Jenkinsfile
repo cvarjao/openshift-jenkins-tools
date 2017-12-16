@@ -2,6 +2,16 @@
 // RedHat Jenkins, comes with pipeline 2.1. So we are stick with Scripted pipeline for now
 
 stage('Processing') {
-    def webhookPayload = readJSON text: params.payload
-    echo "payload: ${webhookPayload}"
+    def payload = readJSON text: params.payload
+    
+    if (payload.pull_request!=null){
+      echo "This is a pull_request event"
+      echo "payload.action: ${payload.action}"
+      echo "payload.pull_request: ${payload.pull_request}"
+      //git branch: 'refs/pull/2', changelog: false, poll: false, url: 'https://github.com/cvarjao/openshift-examples.git'
+      checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: 'refs/pull/2']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'pr-2']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cvarjao/openshift-examples.git']]]
+    }else{
+      echo "This is a unknown event"
+      echo "payload: ${params.payload}"
+    }
 }
