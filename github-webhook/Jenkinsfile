@@ -43,9 +43,9 @@ node('master') {
         }finally{
           sh "rm -rf ${pwd()}/pr-${prNumber}"
         }
-        if (rootDirs.size()==0){){
+        if (rootDirs.size()==0){
           error("No root directory found.")
-        }else if (rootDirs.size()>1){){
+        }else if (rootDirs.size()>1){
           error("Multiple root directory found: ${rootDirs}")
         }else{
           build job: rootDirs[0], parameters: [string(name: 'PULL_REQUEST_NUMBER', value: "${payload.pull_request.number}")], quietPeriod: 0, wait: false
