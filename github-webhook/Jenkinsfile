@@ -4,7 +4,10 @@
 import jenkins.model.*;
 
 
-library identifier: 'custom-lib@master', retriever: modernSCM([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cvarjao/openshift-jenkins-library.git']]])
+library identifier: 'custom-lib@master', retriever: modernSCM(
+  [$class: 'GitSCMSource',
+   remote: 'https://github.com/cvarjao/openshift-jenkins-library.git',
+   credentialsId: ''])
 
 def payload;
 def prNumber;
