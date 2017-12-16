@@ -3,6 +3,9 @@
 
 import jenkins.model.*;
 
+
+library identifier: 'custom-lib@master', retriever: modernSCM([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cvarjao/openshift-jenkins-library.git']]])
+
 def payload;
 def prNumber;
 def cloneUrl;
@@ -72,6 +75,8 @@ def JOB_TEMPLATE='''<?xml version='1.0' encoding='UTF-8'?>
   </definition>
   <triggers/>
 </flow-definition>''';
+
+sayHello 'Joe'
 
 node('master') {
   stage('Processing') {
