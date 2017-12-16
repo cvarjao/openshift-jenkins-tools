@@ -3,15 +3,19 @@
 
 
 def payload;
+def prNumber;
+def cloneUrl;
+def baseSha;
+def headSha;
 
 node('master') {
   stage('Processing') {
       payload = readJSON text: params.payload
       if (payload.pull_request!=null){
-        def prNumber=payload.pull_request.number;
-        def cloneUrl=payload.repository.clone_url;
-        def baseSha=payload.pull_request.base.sha;
-        def headSha=payload.pull_request.head.sha;
+        prNumber=payload.pull_request.number;
+        cloneUrl=payload.repository.clone_url;
+        baseSha=payload.pull_request.base.sha;
+        headSha=payload.pull_request.head.sha;
         
         //echo "This is a pull_request event"
         //echo "payload.action: ${payload.action}"
@@ -50,7 +54,7 @@ node('master') {
         }else if (rootDirs.size()>1){
           error("Multiple root directory found: ${rootDirs}")
         }else{
-          build job: rootDirs[0], parameters: [string(name: 'PULL_REQUEST_NUMBER', value: "${payload.pull_request.number}")], quietPeriod: 0, wait: false
+          build job: rootDirs[0], parameters: [string(name: 'PULL_REQUEST_NUMBER', value: "${payload.pull_request.number}"),string(name: 'REPO_REFSPEC', value: "+refs/pull/${prNumber}/*:refs/remotes/origin/pr/${prNumber}/*"),string(name: 'TARGET_BRANCH_NAME', value: "refs/remotes/origin/pr/${prNumber}/head")], quietPeriod: 0, wait: false
         }
       }else{
         echo "payload: ${params.payload}"
