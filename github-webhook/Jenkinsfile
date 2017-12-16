@@ -1,12 +1,78 @@
 // Version 2.5 of the "Pipeline plugin" introduces support for Declarative Pipeline syntax
 // RedHat Jenkins, comes with pipeline 2.1. So we are stick with Scripted pipeline for now
 
+import jenkins.model.*;
 
 def payload;
 def prNumber;
 def cloneUrl;
 def baseSha;
 def headSha;
+
+def JOB_TEMPLATE='''<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.10">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@0.1.24">
+      <uid></uid>
+      <namespace></namespace>
+      <name></name>
+      <resourceVersion></resourceVersion>
+    </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO_REFSPEC</name>
+          <description></description>
+          <defaultValue>+refs/pull/*:refs/remotes/origin/pr/*</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>TARGET_BRANCH_NAME</name>
+          <description></description>
+          <defaultValue>refs/remotes/origin/pr/2/head</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.30">
+    <scm class="hudson.plugins.git.GitSCM" plugin="git@3.3.0">
+      <configVersion>2</configVersion>
+      <userRemoteConfigs>
+        <hudson.plugins.git.UserRemoteConfig>
+          <name>origin</name>
+          <refspec>${REPO_REFSPEC}</refspec>
+          <url>#{REPO_CLONE_URL}</url>
+        </hudson.plugins.git.UserRemoteConfig>
+      </userRemoteConfigs>
+      <branches>
+        <hudson.plugins.git.BranchSpec>
+          <name>${TARGET_BRANCH_NAME}</name>
+        </hudson.plugins.git.BranchSpec>
+      </branches>
+      <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+      <submoduleCfg class="list"/>
+      <extensions>
+        <hudson.plugins.git.extensions.impl.CloneOption>
+          <shallow>true</shallow>
+          <noTags>true</noTags>
+          <reference></reference>
+          <depth>0</depth>
+          <honorRefspec>true</honorRefspec>
+        </hudson.plugins.git.extensions.impl.CloneOption>
+        <hudson.plugins.git.extensions.impl.WipeWorkspace/>
+      </extensions>
+    </scm>
+    <scriptPath>#{JENKINSFILE_PATH}</scriptPath>
+    <lightweight>false</lightweight>
+  </definition>
+  <triggers/>
+</flow-definition>'''
+​
 
 node('master') {
   stage('Processing') {
@@ -54,7 +120,19 @@ node('master') {
         }else if (rootDirs.size()>1){
           error("Multiple root directory found: ${rootDirs}")
         }else{
-          build job: rootDirs[0], parameters: [string(name: 'PULL_REQUEST_NUMBER', value: "${payload.pull_request.number}"),string(name: 'REPO_REFSPEC', value: "+refs/pull/${prNumber}/*:refs/remotes/origin/pr/${prNumber}/*"),string(name: 'TARGET_BRANCH_NAME', value: "refs/remotes/origin/pr/${prNumber}/head")], quietPeriod: 0, wait: false
+          def jobName=rootDirs[0];
+          def jenkins = Jenkins.getInstance();
+          def job=jenkins.getItem(jobName);
+          def jobConfigXml=JOB_TEMPLATE.replace('#{JENKINSFILE_PATH}', "${jobName}/Jenkinsfile").replace('#{REPO_CLONE_URL}', "${cloneUrl}");
+          
+          java.io.InputStream jobConfigXmlInputStream = new java.io.ByteArrayInputStream(jobConfigXml.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+          
+          if (job==null){            
+            jenkins.createProjectFromXML(jobName, jobConfigXmlInputStream);
+          }else{
+            job.updateByXml(new javax.xml.transform.stream.StreamSource(jobConfigXmlInputStream));
+          }
+          build job: jobName, parameters: [string(name: 'PULL_REQUEST_NUMBER', value: "${payload.pull_request.number}"),string(name: 'REPO_REFSPEC', value: "+refs/pull/${prNumber}/*:refs/remotes/origin/pr/${prNumber}/*"),string(name: 'TARGET_BRANCH_NAME', value: "refs/remotes/origin/pr/${prNumber}/head")], quietPeriod: 0, wait: false
         }
       }else{
         echo "payload: ${params.payload}"
