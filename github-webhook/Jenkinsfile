@@ -143,9 +143,11 @@ node('master') {
           
           java.io.InputStream jobConfigXmlInputStream = new java.io.ByteArrayInputStream(jobConfigXml.getBytes(java.nio.charset.StandardCharsets.UTF_8));
           
-          if (job==null){            
+          if (job==null){
+            echo "Creating project '${jobName}'"
             jenkins.createProjectFromXML(jobName, jobConfigXmlInputStream);
           }else{
+            echo "Updating project '${jobName}'"
             job.updateByXml(new javax.xml.transform.stream.StreamSource(jobConfigXmlInputStream));
           }
           build job: jobName, parameters: [string(name: 'PULL_REQUEST_NUMBER', value: "${payload.pull_request.number}"),string(name: 'REPO_REFSPEC', value: "+refs/pull/${prNumber}/*:refs/remotes/origin/pr/${prNumber}/*"),string(name: 'TARGET_BRANCH_NAME', value: "refs/remotes/origin/pr/${prNumber}/head")], quietPeriod: 0, wait: false
