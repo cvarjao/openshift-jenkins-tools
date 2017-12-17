@@ -9,6 +9,15 @@ library identifier: 'custom-lib@master', retriever: modernSCM(
    remote: 'https://github.com/cvarjao/openshift-jenkins-library.git',
    credentialsId: '']), changelog: false
 
+   
+properties([
+  disableConcurrentBuilds(),
+  parameters([
+    string(name: 'payload', defaultValue: '', description: 'Github webhook payload')
+  ]),
+  pipelineTriggers([])
+])
+
 def payload;
 def prNumber;
 def cloneUrl;

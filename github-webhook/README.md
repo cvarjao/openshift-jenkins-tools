@@ -1,4 +1,4 @@
-## To create a local jenkins account:
+## Create a local jenkins account:
 1. try to authenticate with an invalid password
     ```
     curl -k https://github-webhook:ThisIsAInvalidPassword@jenkins.example.com/whoAmI/
@@ -24,4 +24,10 @@
 1. Use token to trigger builds
      ```
      curl -k -X POST https://github-webhook:%USER_API_TOKEN%@jenkins.example.com/job/github-webhook/buildWithParameters?token=%JOB_SECRET_TOKEN%
+    ```
+
+## Obtain job config.xml
+1. Append config.xml to the job URL
+    ```
+    curl -k https://%USERNAME%:%USER_API_TOKEN%@jenkins.example.com/job/github-webhook/config.xml
     ```
