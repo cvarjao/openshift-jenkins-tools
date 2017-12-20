@@ -48,6 +48,21 @@ def JOB_TEMPLATE='''<?xml version='1.0' encoding='UTF-8'?>
           <description></description>
           <defaultValue>refs/remotes/origin/pr/2/head</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>HEAD_SHA</name>
+          <description></description>
+          <defaultValue>refs/remotes/origin/pr/2/head</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BASE_SHA</name>
+          <description></description>
+          <defaultValue>refs/remotes/origin/pr/2/head</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO_HTML_URL</name>
+          <description></description>
+          <defaultValue>refs/remotes/origin/pr/2/head</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
@@ -150,7 +165,7 @@ node('master') {
             echo "Updating project '${jobName}'"
             job.updateByXml(new javax.xml.transform.stream.StreamSource(jobConfigXmlInputStream));
           }
-          build job: jobName, parameters: [string(name: 'PULL_REQUEST_NUMBER', value: "${payload.pull_request.number}"),string(name: 'REPO_REFSPEC', value: "+refs/pull/${prNumber}/*:refs/remotes/origin/pr/${prNumber}/*"),string(name: 'TARGET_BRANCH_NAME', value: "refs/remotes/origin/pr/${prNumber}/head")], quietPeriod: 0, wait: false
+          build job: jobName, parameters: [string(name: 'PULL_REQUEST_NUMBER', value: "${payload.pull_request.number}"),string(name: 'REPO_REFSPEC', value: "+refs/pull/${prNumber}/*:refs/remotes/origin/pr/${prNumber}/*"),string(name: 'TARGET_BRANCH_NAME', value: "refs/remotes/origin/pr/${prNumber}/head"),string(name: 'HEAD_SHA', value: "${payload.pull_request.head.sha}"),string(name: 'BASE_SHA', value: "${payload.pull_request.base.sha}"),string(name: 'REPO_HTML_URL', value: "${payload.repository.html_url}")], quietPeriod: 0, wait: false
         }
       }else{
         echo "payload: ${params.payload}"
