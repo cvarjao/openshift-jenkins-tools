@@ -105,6 +105,10 @@ def JOB_TEMPLATE='''<?xml version='1.0' encoding='UTF-8'?>
 
 sayHello 'Joe'
 
+if (params.payload == null || params.payload.equals("")){
+  error "GitHub payload parameter is missing or empty."
+}
+
 node('master') {
   stage('Processing') {
       payload = readJSON text: params.payload
