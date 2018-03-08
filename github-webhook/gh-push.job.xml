@@ -50,7 +50,7 @@
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <authToken>#{authToken}</authToken>
+  <authToken>#{JOB_SECRET}</authToken>
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
