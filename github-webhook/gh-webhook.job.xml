@@ -65,8 +65,11 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@2.0">
-      <source class="hudson.plugins.groovy.FileSystemScriptSource">
-        <scriptFile>github-webhook/gh-push.groovy</scriptFile>
+      <source class="hudson.plugins.groovy.StringSystemScriptSource">
+        <script plugin="script-security@1.41">
+          <script>evaluate(new File(build.workspace.toString(), &quot;github-webhook/gh-push.groovy&quot;))</script>
+          <sandbox>false</sandbox>
+        </script>
       </source>
     </hudson.plugins.groovy.SystemGroovy>
   </builders>
