@@ -5,5 +5,13 @@
   - uncheck "Manage Hooks"
 */
 
+/* LOGGER:
+org.jenkinsci.plugins.workflow.multibranch
+org.jenkinsci.plugins.github_branch_source
+jenkins.branch
+hudson.plugins.git
+org.jenkinsci.plugins.github
+
+*/
 println "Initializing from remote script"
 
