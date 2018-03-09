@@ -5,18 +5,19 @@ def thr = Thread.currentThread()
 // get current build
 def build = thr?.executable
 
-// get parameters
-def parameters = build?.actions.find{ it instanceof ParametersAction }?.parameters
-parameters.each {
-   println "parameter ${it.name}:"
-   println it.dump()
-   println "-" * 80
-}
- 
- 
-// ... or if you want the parameter by name ...
-def hardcoded_param = "payload"
 def resolver = build.buildVariableResolver
-def hardcoded_param_value = resolver.resolve(hardcoded_param)
- 
-println "param ${hardcoded_param} value : ${hardcoded_param_value}"
+def ghPayload = new JsonSlurper().parseText(resolver.resolve('payload'))
+def ghEvent = resolver.resolve('X-GitHub-Event')
+def ghSignature = resolver.resolve('X-Hub-Signature')
+
+//println "param ${hardcoded_param} value : ${hardcoded_param_value}"
+
+String GH_EVENT_PUSH='push';
+String GH_EVENT_PR='pull_request';
+
+if (GH_EVENT_PR.equals(ghEvent)){
+ String ghEventAction=ghPayload.action
+ println "action: ${ghEventAction}"
+}else{
+  println "Unsuported event"
+}
