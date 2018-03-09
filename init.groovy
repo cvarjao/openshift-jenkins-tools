@@ -15,3 +15,12 @@ org.jenkinsci.plugins.github
 */
 println "Initializing from remote script"
 
+
+/*
+method hudson.plugins.git.UserRemoteConfig getUrl
+method hudson.scm.SCM getKey
+method org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper getRawBuild
+method hudson.model.Run getPreviousBuildInProgress
+
+*/
+
