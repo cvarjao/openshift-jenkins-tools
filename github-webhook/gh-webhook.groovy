@@ -18,6 +18,9 @@ String GH_EVENT_PR='pull_request';
 
 if (GH_EVENT_PR.equals(ghEvent)){
  String ghEventAction=ghPayload.action
+ String targetBarnch=ghPayload.base.ref
+ String senderLogin = ghPayload.sender.login
+ 
  println "action: ${ghEventAction}"
 }else{
   println "Unsuported event"
