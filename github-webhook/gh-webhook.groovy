@@ -1,5 +1,6 @@
-import hudson.model.*
- 
+import hudson.model.*;
+import groovy.json.JsonSlurper;
+
 // get current thread / Executor
 def thr = Thread.currentThread()
 // get current build
