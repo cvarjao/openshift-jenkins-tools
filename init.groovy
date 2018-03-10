@@ -1,6 +1,8 @@
 import com.cloudbees.plugins.credentials.impl.*;
 import com.cloudbees.plugins.credentials.*;
 import com.cloudbees.plugins.credentials.domains.*;
+import org.jenkinsci.plugins.plaincredentials.impl.*;
+import hudson.util.Secret;
 
 /* TODO:
 - Create Jenkins Credetential "Secret Text" with id "github-access-token"
@@ -28,5 +30,19 @@ method hudson.model.Run getPreviousBuildInProgress
 
 */
 
-Credentials c1 = (Credentials) new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL,"github-account", "GitHub account", System.getenv()['GH_USERNAME'], System.getenv()['GH_PASSWORD'])
-SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), c1)
+Credentials c1 = (Credentials) new UsernamePasswordCredentialsImpl(
+  CredentialsScope.GLOBAL,
+  "github-account",
+  "GitHub account",
+  System.getenv()['GH_USERNAME'],
+  System.getenv()['GH_PASSWORD']);
+
+SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), c1);
+
+Credentials c2 = (Credentials) new StringCredentialsImpl(
+   CredentialsScope.GLOBAL,
+  "github-access-token",
+  "GitHub account (Access Token)",
+  Secret.fromString(System.getenv()['GH_ACCESS_TOKEN']));
+
+SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), c2);
