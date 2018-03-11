@@ -5,7 +5,10 @@ import org.jenkinsci.plugins.plaincredentials.impl.*;
 import hudson.util.Secret;
 import jenkins.model.*
 import hudson.model.*
-  
+import java.net.URL;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 /* TODO:
 - Create Jenkins Credetential "Secret Text" with id "github-access-token"
 - Create Jenkins Credential "Username and Password" with id "github-account" where password is the same as "github-access-token"
@@ -61,7 +64,13 @@ ghCofigs.add(ghServerConfig);
 Jenkins.getInstance().save()
 
 
+String ghTemplateJobConfigXml = new URL('https://raw.githubusercontent.com/cvarjao/openshift-jenkins-tools/master/workflow-multibranch.template.xml').getText(StandardCharsets.UTF_8.name()).trim();
 
 System.getenv()['GH_REPOSITORIES'].split(',').each { repo ->
-  println "Addind GitHub job for repository '${repo}'"
+  def (repo_owner, repo_name) = repo.tokenize( '/' )
+  def ghJobConfigXml=ghTemplateJobConfigXml.replaceAll('\\Q#{REPO_OWNER}\\E', repo_owner).replaceAll('\\Q#{REPO_NAME}\\E', repo_name);
+  println "Addind GitHub job for repository '${repo_owner}' / '${repo_name}'"
+  InputStream ghPushJobConfigInputStream = new ByteArrayInputStream(ghJobConfigXml.getBytes(StandardCharsets.UTF_8));
+  Jenkins.instance.createProjectFromXML("${repo_owner}-${repo_name}", ghJobConfigXml);
+  
 }
