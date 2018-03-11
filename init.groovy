@@ -59,3 +59,9 @@ ghServerConfig.setClientCacheSize(21)
 ghCofigs.clear();
 ghCofigs.add(ghServerConfig);
 Jenkins.getInstance().save()
+
+
+
+System.getenv()['GH_REPOSITORIES'].split(',').each { repo ->
+  println "Addind GitHub job for repository '${repo}'"
+}
