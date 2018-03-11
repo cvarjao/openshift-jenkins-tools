@@ -79,7 +79,8 @@ def sa = org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval.get();
   'method hudson.plugins.git.UserRemoteConfig getUrl',
   'method hudson.scm.SCM getKey',
   'method org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper getRawBuild',
-  'method hudson.model.Run getPreviousBuildInProgress'
+  'method hudson.model.Run getPreviousBuildInProgress',
+  'staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods putAt java.lang.Object java.lang.String java.lang.Object'
 ].each {
   sa.approveSignature(it);
 }
