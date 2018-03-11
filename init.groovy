@@ -71,6 +71,5 @@ System.getenv()['GH_REPOSITORIES'].split(',').each { repo ->
   def ghJobConfigXml=ghTemplateJobConfigXml.replaceAll('\\Q#{REPO_OWNER}\\E', repo_owner).replaceAll('\\Q#{REPO_NAME}\\E', repo_name);
   println "Addind GitHub job for repository '${repo_owner}' / '${repo_name}'"
   InputStream ghPushJobConfigInputStream = new ByteArrayInputStream(ghJobConfigXml.getBytes(StandardCharsets.UTF_8));
-  Jenkins.instance.createProjectFromXML("${repo_owner}-${repo_name}", ghJobConfigXml);
-  
+  Jenkins.instance.createProjectFromXML("${repo_owner}-${repo_name}", ghPushJobConfigInputStream);  
 }
