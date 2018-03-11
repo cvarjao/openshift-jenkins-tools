@@ -3,7 +3,9 @@ import com.cloudbees.plugins.credentials.*;
 import com.cloudbees.plugins.credentials.domains.*;
 import org.jenkinsci.plugins.plaincredentials.impl.*;
 import hudson.util.Secret;
-
+import jenkins.model.*
+import hudson.model.*
+  
 /* TODO:
 - Create Jenkins Credetential "Secret Text" with id "github-access-token"
 - Create Jenkins Credential "Username and Password" with id "github-account" where password is the same as "github-access-token"
