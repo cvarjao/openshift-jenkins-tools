@@ -73,3 +73,13 @@ System.getenv()['GH_REPOSITORIES'].split(',').each { repo ->
   InputStream ghPushJobConfigInputStream = new ByteArrayInputStream(ghJobConfigXml.getBytes(StandardCharsets.UTF_8));
   Jenkins.instance.createProjectFromXML("${repo_owner}-${repo_name}", ghPushJobConfigInputStream);  
 }
+
+def sa = org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval.get();
+[
+  'method hudson.plugins.git.UserRemoteConfig getUrl',
+  'method hudson.scm.SCM getKey',
+  'method org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper getRawBuild',
+  'method hudson.model.Run getPreviousBuildInProgress'
+].each {
+  sa.approveSignature(it);
+}
