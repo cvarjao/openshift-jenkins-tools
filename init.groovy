@@ -47,9 +47,6 @@ Credentials c2 = (Credentials) new StringCredentialsImpl(
 
 SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), c2);
 
-
-/*
-
 Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class)
 def ghCofigs = Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class).getConfigs();
 def ghServerConfig = new org.jenkinsci.plugins.github.config.GitHubServerConfig('github-access-token');
@@ -60,5 +57,3 @@ ghServerConfig.setClientCacheSize(21)
 ghCofigs.clear();
 ghCofigs.add(ghServerConfig);
 Jenkins.getInstance().save()
-
-*/
