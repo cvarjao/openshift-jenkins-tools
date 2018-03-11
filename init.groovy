@@ -46,3 +46,14 @@ Credentials c2 = (Credentials) new StringCredentialsImpl(
   Secret.fromString(System.getenv()['GH_ACCESS_TOKEN']));
 
 SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), c2);
+
+
+/*
+Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class)
+def ghCofigs = Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class).getConfigs();
+def ghServerConfig = new GitHubServerConfig('github-access-token');
+
+ghCofigs.clear();
+ghCofigs.add(ghServerConfig);
+
+*/
