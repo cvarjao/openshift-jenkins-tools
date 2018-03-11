@@ -34,7 +34,7 @@
           <id>4baad299-f13d-4143-b21b-b6ec681984c6</id>
           <credentialsId>github-account</credentialsId>
           <repoOwner>#{REPO_OWNER}</repoOwner>
-          <repository>#{REPo_NAME}</repository>
+          <repository>#{REPO_NAME}</repository>
           <traits>
             <org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait>
               <strategyId>1</strategyId>
