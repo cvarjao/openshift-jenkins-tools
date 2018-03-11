@@ -49,11 +49,16 @@ SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(
 
 
 /*
+
 Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class)
 def ghCofigs = Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class).getConfigs();
-def ghServerConfig = new GitHubServerConfig('github-access-token');
-
+def ghServerConfig = new org.jenkinsci.plugins.github.config.GitHubServerConfig('github-access-token');
+ghServerConfig.setName('GitHub')
+ghServerConfig.setApiUrl('https://api.github.com')
+ghServerConfig.setManageHooks(false);
+ghServerConfig.setClientCacheSize(21)
 ghCofigs.clear();
 ghCofigs.add(ghServerConfig);
+Jenkins.getInstance().save()
 
 */
