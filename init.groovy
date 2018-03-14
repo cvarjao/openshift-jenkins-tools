@@ -3,11 +3,13 @@ import com.cloudbees.plugins.credentials.*;
 import com.cloudbees.plugins.credentials.domains.*;
 import org.jenkinsci.plugins.plaincredentials.impl.*;
 import hudson.util.Secret;
-import jenkins.model.*
-import hudson.model.*
+import jenkins.model.*;
+import hudson.model.*;
 import java.net.URL;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
+
 
 /* TODO:
 - Create Jenkins Credetential "Secret Text" with id "github-access-token"
@@ -51,6 +53,18 @@ Credentials c2 = (Credentials) new StringCredentialsImpl(
   Secret.fromString(System.getenv()['GH_ACCESS_TOKEN']));
 
 SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), c2);
+
+
+new File('/var/lib/jenkins-deployer-credentials').eachFileMatch(groovy.io.FileType.FILES, ~/.*\.token/, { file ->
+  Credentials cred = (Credentials) new OpenShiftTokenCredentials(
+          CredentialsScope.GLOBAL,
+          "jenkins-deployer-"+file.name,
+          "OpenShift Secret (it.name)",
+          Secret.fromString(file.text));
+
+  SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), cred);
+});
+
 
 Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class)
 def ghCofigs = Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class).getConfigs();
