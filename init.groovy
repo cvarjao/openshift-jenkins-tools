@@ -66,6 +66,7 @@ new File('/var/lib/jenkins-deployer-credentials').eachFileMatch(groovy.io.FileTy
 });
 
 
+println "Configuring GitHub API"
 Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class)
 def ghCofigs = Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class).getConfigs();
 def ghServerConfig = new org.jenkinsci.plugins.github.config.GitHubServerConfig('github-access-token');
@@ -75,7 +76,24 @@ ghServerConfig.setManageHooks(false);
 ghServerConfig.setClientCacheSize(21)
 ghCofigs.clear();
 ghCofigs.add(ghServerConfig);
+
+
+println "Configuring Global Libraries"
+def libScm = new jenkins.plugins.git.GitSCMSource('https://github.com/cvarjao/openshift-jenkins-library.git');
+libScm.setCredentialsId('github-account');
+libScm.setTraits([new jenkins.plugins.git.traits.BranchDiscoveryTrait(), new jenkins.plugins.git.traits.TagDiscoveryTrait()]);
+def libRetriever = new org.jenkinsci.plugins.workflow.libs.SCMSourceRetriever(libScm)
+def libConfig = new org.jenkinsci.plugins.workflow.libs.LibraryConfiguration("csnr-openshift-jenkins-shared-library", libRetriever)
+libConfig.setDefaultVersion("master");
+libConfig.setImplicit(true);
+libConfig.setAllowVersionOverride(true);
+libConfig.setIncludeInChangesets(true);
+Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.workflow.libs.GlobalLibraries.class).setLibraries([libConfig])
+
+
 Jenkins.getInstance().save()
+
+
 
 
 String ghTemplateJobConfigXml = new URL('https://raw.githubusercontent.com/cvarjao/openshift-jenkins-tools/master/workflow-multibranch.template.xml').getText(StandardCharsets.UTF_8.name()).trim();
