@@ -14,10 +14,9 @@ import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 println "Initializing from remote script"
 
 def process=['oc', 'get', 'configmaps/__jenkins', '--template={{.data.config}}'].execute()
-process.waitFor()
+String jenkinsConfigText = process.text
 if (process.exitValue() != 0 ) throw new RuntimeException("'ConfigMap/jenkins' was NOT found (exit value:${process.exitValue()})")
 
-String jenkinsConfigText = process.text
 String githubUsername=['sh', '-c', 'oc get secret/github-credentials --template={{.data.username}} | base64 --decode'].execute().text
 String githubPassword=['sh', '-c', 'oc get secret/github-credentials --template={{.data.password}} | base64 --decode'].execute().text
 def jenkinsConfig = new groovy.json.JsonSlurper().parseText(jenkinsConfigText?:'{}')
