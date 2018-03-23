@@ -12,7 +12,7 @@ import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 
 
 
-String jenkinsConfig=['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'].execute().text
+String jenkinsConfig = new groovy.json.JsonSlurper().parseText(['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'].execute().text)
 String githubUsername=['sh', '-c', 'oc get secret/github-credentials --template={{.data.username}} | base64 --decode'].execute().text
 String githubPassword=['sh', '-c', 'oc get secret/github-credentials --template={{.data.password}} | base64 --decode'].execute().text
 
@@ -108,7 +108,7 @@ Jenkins.getInstance().save()
 
 String ghTemplateJobConfigXml = new URL('https://raw.githubusercontent.com/cvarjao/openshift-jenkins-tools/master/workflow-multibranch.template.xml').getText(StandardCharsets.UTF_8.name()).trim();
 
-System.getenv()['GH_REPOSITORIES'].split(',').each { repo ->
+jenkinsConfig.'github-repositories'.each { repo ->
   def (repo_owner, repo_name) = repo.tokenize( '/' )
   def ghJobConfigXml=ghTemplateJobConfigXml.replaceAll('\\Q#{REPO_OWNER}\\E', repo_owner).replaceAll('\\Q#{REPO_NAME}\\E', repo_name);
   println "Addind GitHub job for repository '${repo_owner}' / '${repo_name}'"
