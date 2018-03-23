@@ -13,9 +13,11 @@ import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 
 println "Initializing from remote script"
 
-def jenkinsConfig = new groovy.json.JsonSlurper().parseText(['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'].execute().text)
+
+String jenkinsConfigText = ['oc', 'get', 'configmaps/__jenkins', '--template={{.data.config}}'].execute().text
 String githubUsername=['sh', '-c', 'oc get secret/github-credentials --template={{.data.username}} | base64 --decode'].execute().text
 String githubPassword=['sh', '-c', 'oc get secret/github-credentials --template={{.data.password}} | base64 --decode'].execute().text
+def jenkinsConfig = new groovy.json.JsonSlurper().parseText(jenkinsConfigText?:'{}')
 
 println "Jenkins ConfigMap:"
 println "${jenkinsConfig}"
