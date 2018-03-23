@@ -13,6 +13,8 @@ import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 
 
 String jenkinsConfig=['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'].execute().text
+String githubUsername=['sh', '-c', 'oc get secret/github-credentials --template={{.data.username}} | base64 --decode'].execute().text
+String githubPassword=['sh', '-c', 'oc get secret/github-credentials --template={{.data.password}} | base64 --decode'].execute().text
 
 println "Jenkins ConfigMap:"
 println "${jenkinsConfig}"
@@ -48,8 +50,8 @@ Credentials c1 = (Credentials) new UsernamePasswordCredentialsImpl(
   CredentialsScope.GLOBAL,
   "github-account",
   "GitHub account",
-  System.getenv()['GH_USERNAME'],
-  System.getenv()['GH_PASSWORD']);
+  githubUsername,
+  githubPassword);
 
 SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), c1);
 
@@ -57,7 +59,7 @@ Credentials c2 = (Credentials) new StringCredentialsImpl(
    CredentialsScope.GLOBAL,
   "github-access-token",
   "GitHub account (Access Token)",
-  Secret.fromString(System.getenv()['GH_ACCESS_TOKEN']));
+  Secret.fromString(githubPassword));
 
 SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), c2);
 
