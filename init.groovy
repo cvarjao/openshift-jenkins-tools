@@ -14,7 +14,7 @@ import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 def runOrDie(command, String errorMessage){
   def process=command.execute()
   String processText = process.text
-  process.waitFor()
+  def exitValue = process.waitFor()
   if (process.exitValue() != 0 ) throw new RuntimeException("${errorMessage} (exit value:${process.exitValue()})")  
   return processText
 }
