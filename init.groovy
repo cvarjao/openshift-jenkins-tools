@@ -12,9 +12,10 @@ import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 
 
 
+String jenkinsConfig=['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'].execute().text
 
 println "Jenkins ConfigMap:"
-println ['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'].execute().text
+println "${jenkinsConfig}"
 
 
 /* TODO:
