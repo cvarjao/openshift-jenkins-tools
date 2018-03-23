@@ -12,7 +12,7 @@ import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 
 
 
-String jenkinsConfig = new groovy.json.JsonSlurper().parseText(['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'].execute().text)
+def jenkinsConfig = new groovy.json.JsonSlurper().parseText(['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'].execute().text)
 String githubUsername=['sh', '-c', 'oc get secret/github-credentials --template={{.data.username}} | base64 --decode'].execute().text
 String githubPassword=['sh', '-c', 'oc get secret/github-credentials --template={{.data.password}} | base64 --decode'].execute().text
 
