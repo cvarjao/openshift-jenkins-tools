@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 
 
+println "Initializing from remote script"
 
 def jenkinsConfig = new groovy.json.JsonSlurper().parseText(['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'].execute().text)
 String githubUsername=['sh', '-c', 'oc get secret/github-credentials --template={{.data.username}} | base64 --decode'].execute().text
@@ -35,7 +36,7 @@ hudson.plugins.git
 org.jenkinsci.plugins.github
 
 */
-println "Initializing from remote script"
+
 
 
 /*
