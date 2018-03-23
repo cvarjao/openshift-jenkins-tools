@@ -64,16 +64,17 @@ Credentials c2 = (Credentials) new StringCredentialsImpl(
 SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), c2);
 
 
-new File('/var/lib/jenkins-deployer-credentials').eachFileMatch(groovy.io.FileType.FILES, ~/.*\.token/, { file ->
+def jsonSlurper = new groovy.json.JsonSlurper()
+def deployerCredentials = jsonSlurper.parseText(['sh', '-c', 'oc get secret/jenkins-deployer-credentials -o json'].execute().text)
+deployerCredentials.data.each { key, value ->
   Credentials cred = (Credentials) new OpenShiftTokenCredentials(
           CredentialsScope.GLOBAL,
-          "jenkins-deployer-"+file.name,
-          "OpenShift Secret (it.name)",
-          Secret.fromString(file.text));
+          "jenkins-deployer-"+key,
+          "OpenShift Secret (${key})",
+          Secret.fromString(new String(value.decodeBase64())));
 
   SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), cred);
-});
-
+}
 
 println "Configuring GitHub API"
 Jenkins.getInstance().getDescriptor(org.jenkinsci.plugins.github.config.GitHubPluginConfig.class)
