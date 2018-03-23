@@ -14,6 +14,7 @@ import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 println "Initializing from remote script"
 
 def process=['oc', 'get', 'configmaps/__jenkins', '--template={{.data.config}}'].execute()
+process.waitFor()
 if (process.exitValue() != 0 ) throw new RuntimeException("'ConfigMap/jenkins' was NOT found (exit value:${process.exitValue()})")
 
 String jenkinsConfigText = process.text
