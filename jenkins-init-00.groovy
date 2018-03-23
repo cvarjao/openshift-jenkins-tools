@@ -10,6 +10,9 @@ import java.net.URL;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+
+println("jenkins-init-00:jenkinsConfig:${jenkinsConfig}")
+
 println 'Configuring JNLP agent protocols'
 //https://github.com/samrocketman/jenkins-bootstrap-shared/blob/master/scripts/configure-jnlp-agent-protocols.groovy
 Jenkins.instance.setAgentProtocols(['JNLP4-connect', 'Ping'] as Set<String>)
