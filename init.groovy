@@ -11,14 +11,17 @@ import java.nio.charset.StandardCharsets;
 import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 
 
+def runOrDie(command, String errorMessage){
+  def process=command.execute()
+  String processText = process.text
+  if (process.exitValue() != 0 ) throw new RuntimeException("${errorMessage} (exit value:${process.exitValue()})")  
+  return processText
+}
+
 println "Initializing from remote script"
-
-def process=['oc', 'get', 'configmaps/__jenkins', '--template={{.data.config}}'].execute()
-String jenkinsConfigText = process.text
-if (process.exitValue() != 0 ) throw new RuntimeException("'ConfigMap/jenkins' was NOT found (exit value:${process.exitValue()})")
-
-String githubUsername=['sh', '-c', 'oc get secret/github-credentials --template={{.data.username}} | base64 --decode'].execute().text
-String githubPassword=['sh', '-c', 'oc get secret/github-credentials --template={{.data.password}} | base64 --decode'].execute().text
+String jenkinsConfigText = runOrDie(['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'], "'ConfigMaps/jenkins' was NOT found")
+String githubUsername=runOrDie(['sh', '-c', 'oc get secret/github-credentials --template={{.data.username}} | base64 --decode'], "'secret/github-credentials' was NOT nound")
+String githubPassword=runOrDie(['sh', '-c', 'oc get secret/github-credentials --template={{.data.password}} | base64 --decode'], "'secret/github-credentials' was NOT nound")
 def jenkinsConfig = new groovy.json.JsonSlurper().parseText(jenkinsConfigText?:'{}')
 
 println "Jenkins ConfigMap:"
