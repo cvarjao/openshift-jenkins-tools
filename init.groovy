@@ -11,6 +11,12 @@ import java.nio.charset.StandardCharsets;
 import com.openshift.jenkins.plugins.OpenShiftTokenCredentials;
 
 
+
+
+println "Jenkins ConfigMap:"
+println ['oc', 'get', 'configmaps/jenkins', '--template={{.data.config}}'].execute().text
+
+
 /* TODO:
 - Create Jenkins Credetential "Secret Text" with id "github-access-token"
 - Create Jenkins Credential "Username and Password" with id "github-account" where password is the same as "github-access-token"
