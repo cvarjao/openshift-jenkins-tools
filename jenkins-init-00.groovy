@@ -10,8 +10,26 @@ import java.net.URL;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+def runOrDie(command, String errorMessage){
+    def process=command.execute()
+    System.err.println(command)
+    String processText = process.text
+    def exitValue = process.waitFor()
+    if (process.exitValue() != 0 ) throw new RuntimeException("${errorMessage} (exit value:${process.exitValue()})")
+    return processText
+}
+
+println("jenkins-init-00:Binding Variables:")
+
+binding.variables.each{
+    println it.key
+    println it.value
+}
 
 println("jenkins-init-00:jenkinsConfig:${jenkinsConfig}")
+
+
+
 
 println 'Configuring JNLP agent protocols'
 //https://github.com/samrocketman/jenkins-bootstrap-shared/blob/master/scripts/configure-jnlp-agent-protocols.groovy
