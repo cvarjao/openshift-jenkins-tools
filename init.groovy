@@ -108,7 +108,7 @@ Jenkins.getInstance().save()
 
 String ghTemplateJobConfigXml = new URL('https://raw.githubusercontent.com/cvarjao/openshift-jenkins-tools/master/workflow-multibranch.template.xml').getText(StandardCharsets.UTF_8.name()).trim();
 
-jenkinsConfig.'github-repositories'.each { repo ->
+jenkinsConfig['github-repositories'].each { repo ->
   def (repo_owner, repo_name) = repo.tokenize( '/' )
   def ghJobConfigXml=ghTemplateJobConfigXml.replaceAll('\\Q#{REPO_OWNER}\\E', repo_owner).replaceAll('\\Q#{REPO_NAME}\\E', repo_name);
   println "Addind GitHub job for repository '${repo_owner}' / '${repo_name}'"
