@@ -18,7 +18,7 @@ properties([
   pipelineTriggers([
     [$class: 'GenericTrigger',
     genericHeaderVariables: [
-     [key: 'X-GitHub-Event', regexpFilter: '']
+     [key: 'x-github-event', regexpFilter: '']
     ],
     printContributedVariables: true,
     printPostContent: true,
