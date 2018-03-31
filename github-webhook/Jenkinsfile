@@ -15,7 +15,17 @@ properties([
   parameters([
     string(name: 'payload', defaultValue: '', description: 'Github webhook payload')
   ]),
-  pipelineTriggers([])
+  pipelineTriggers([
+    [$class: 'GenericTrigger',
+    genericHeaderVariables: [
+     [key: 'X-GitHub-Event', regexpFilter: '']
+    ],
+    printContributedVariables: true,
+    printPostContent: true,
+    regexpFilterText: '',
+    regexpFilterExpression: ''
+   ]
+  ])
 ])
 
 def payload;
