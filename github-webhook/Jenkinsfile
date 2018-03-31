@@ -3,12 +3,12 @@
 
 import jenkins.model.*;
 
-
+/*
 library identifier: 'custom-lib@master', retriever: modernSCM(
   [$class: 'GitSCMSource',
    remote: 'https://github.com/cvarjao/openshift-jenkins-library.git',
    credentialsId: '']), changelog: false
-
+*/
    
 properties([
   disableConcurrentBuilds(),
