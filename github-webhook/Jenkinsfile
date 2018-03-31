@@ -13,7 +13,7 @@ library identifier: 'custom-lib@master', retriever: modernSCM(
 properties([
   disableConcurrentBuilds(),
   parameters([
-    string(name: 'payload', defaultValue: '', description: 'Github webhook payload')
+    string(name: 'payload', defaultValue: '', description: 'Github webhook payload'),
     string(name: 'x_github_event', defaultValue: '', description: 'Github Event Type')
   ]),
   pipelineTriggers([
