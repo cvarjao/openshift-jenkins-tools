@@ -21,6 +21,9 @@ properties([
     genericHeaderVariables: [
      [key: 'x-github-event', regexpFilter: '']
     ],
+    genericRequestVariables: [
+     [key: 'payload', regexpFilter: '']
+    ],
     printContributedVariables: true,
     printPostContent: true,
     regexpFilterText: '',
