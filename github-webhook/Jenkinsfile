@@ -142,7 +142,7 @@ node('master') {
         //echo "payload.repository.clone_url: ${payload.repository.clone_url}"
         //echo "payload.pull_request.base.sha: ${payload.pull_request.base.sha}"
         //echo "payload.pull_request.head.sha: ${payload.pull_request.head.sha}"
-        
+        /*
         def rootDirs=[];
         try{
           checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: "refs/remotes/origin/pr/${prNumber}/head"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', depth: 0, honorRefspec: true, noTags: true, reference: '', shallow: false], [$class: 'RelativeTargetDirectory', relativeTargetDir: "pr-${prNumber}"], [$class: 'LocalBranch', localBranch: "pr-${prNumber}"]], submoduleCfg: [], userRemoteConfigs: [[name: 'origin', refspec: "+refs/pull/${prNumber}/*:refs/remotes/origin/pr/${prNumber}/*", url: "${cloneUrl}"]]]
@@ -185,6 +185,10 @@ node('master') {
           }
           build job: jobName, parameters: [string(name: 'PULL_REQUEST_NUMBER', value: "${payload.pull_request.number}"),string(name: 'REPO_REFSPEC', value: "+refs/pull/${prNumber}/*:refs/remotes/origin/pr/${prNumber}/*"),string(name: 'TARGET_BRANCH_NAME', value: "refs/remotes/origin/pr/${prNumber}/head"),string(name: 'HEAD_SHA', value: "${payload.pull_request.head.sha}"),string(name: 'BASE_SHA', value: "${payload.pull_request.base.sha}"),string(name: 'REPO_HTML_URL', value: "${payload.repository.html_url}")], quietPeriod: 0, wait: false
         }
+        */
+      }else if ('ping'.equalsIgnoreCase(params.x_github_event)){
+        echo 'Ping Event!!!'
+        echo "x_github_event: ${params.x_github_event}"
       }else{
         echo "payload: ${params.payload}"
         error("Build failed because this is not a supported event")
