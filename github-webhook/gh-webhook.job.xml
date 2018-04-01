@@ -1,3 +1,4 @@
+
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
@@ -16,17 +17,12 @@
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
           <name>payload</name>
-          <description></description>
+          <description>GitHub WebHook payload</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>X-GitHub-Event</name>
-          <description></description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>X-Hub-Signature</name>
-          <description></description>
+          <name>x_github_event</name>
+          <description>GitHub WebHook Event Type</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -36,7 +32,8 @@
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url>#{GIT_REPO_URL}</url>
+        <url>https://github.com/cvarjao/openshift-jenkins-tools.git</url>
+        <credentialsId>github-account</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -52,7 +49,7 @@
         <noTags>true</noTags>
         <reference></reference>
         <depth>1</depth>
-        <honorRefspec>false</honorRefspec>
+        <honorRefspec>true</honorRefspec>
       </hudson.plugins.git.extensions.impl.CloneOption>
     </extensions>
   </scm>
@@ -60,8 +57,27 @@
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <authToken>#{JOB_SECRET}</authToken>
-  <triggers/>
+  <triggers>
+    <org.jenkinsci.plugins.gwt.GenericTrigger plugin="generic-webhook-trigger@1.30">
+      <spec></spec>
+      <regexpFilterText></regexpFilterText>
+      <regexpFilterExpression></regexpFilterExpression>
+      <genericRequestVariables>
+        <org.jenkinsci.plugins.gwt.GenericRequestVariable>
+          <key>payload</key>
+          <regexpFilter></regexpFilter>
+        </org.jenkinsci.plugins.gwt.GenericRequestVariable>
+      </genericRequestVariables>
+      <genericHeaderVariables>
+        <org.jenkinsci.plugins.gwt.GenericHeaderVariable>
+          <key>x-github-event</key>
+          <regexpFilter></regexpFilter>
+        </org.jenkinsci.plugins.gwt.GenericHeaderVariable>
+      </genericHeaderVariables>
+      <printPostContent>false</printPostContent>
+      <printContributedVariables>false</printContributedVariables>
+    </org.jenkinsci.plugins.gwt.GenericTrigger>
+  </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@2.0">
